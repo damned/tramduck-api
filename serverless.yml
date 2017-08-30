@@ -19,10 +19,10 @@ package:
     - .git/**
 
 functions:
-  first:
-    handler: http
+  trams:
+    handler: trams
     events:
-      - http: path
+      - http: trams
 
   # NOTE: the following uses an "event" event (pubSub event in this case).
   # Please create the corresponding resources in the Google Cloud
