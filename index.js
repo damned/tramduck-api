@@ -2,7 +2,7 @@
 
 const cheerio = require('cheerio');
 const reqlib = require('request');
-
+const stations = require('./stations.json');
 
 function Tram($tram) {
   function field(selector) {
@@ -39,16 +39,17 @@ function Tram($tram) {
 }
 
 exports.trams = (request, response) => {
-  let tram_stop_id = 'piccadilly-gardens-tram';
+  let tram_stop_id = 'piccadilly-gardens';
+  let tfgm_stop_id = stations.find(station => { return station.id === tram_stop_id }).tfgm_id;
   // let tram_stop_id = 'stretford-tram';
-  
-  let url = 'https://beta.tfgm.com/public-transport/tram/stops/' + tram_stop_id;
+
+  let url = 'https://beta.tfgm.com/public-transport/tram/stops/' + tfgm_stop_id;
   reqlib.get(url, (error, page_response, body) => {
     let $ = cheerio.load(body);
 
     let trams = $('#departure-items .tram').get().map(el => { return Tram($(el)); });
 
-    response.status(200).send({ stop: { tfgm_id: tram_stop_id }, trams: trams });
+    response.status(200).send({ stop: { tfgm_id: tfgm_stop_id }, trams: trams });
   });  
 };
 

@@ -29,4 +29,4 @@ let stations = station_ids.map(station => {
   }
 });
 
-console.log(stations);
+console.log(JSON.stringify(stations));
