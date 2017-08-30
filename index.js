@@ -38,10 +38,32 @@ function Tram($tram) {
   }
 }
 
+function lookupTfgmId(tram_stop_id) {
+  try {
+    return stations.find(station => { return station.id === tram_stop_id }).tfgm_id;
+  }
+  catch(err) {
+    console.log('Unknown station id', err);
+    return null;
+  }
+}
+
+function valid_station_ids() {
+  return stations.map(station => { return station.id; });
+}
+
 exports.trams = (request, response) => {
   let tram_stop_id = 'piccadilly-gardens';
-  let tfgm_stop_id = stations.find(station => { return station.id === tram_stop_id }).tfgm_id;
-  // let tram_stop_id = 'stretford-tram';
+  if (request.path !== null && request.path.length > 1) {
+    tram_stop_id = request.path.slice(1);
+  }
+  console.log('path', request.path);
+  let tfgm_stop_id = lookupTfgmId(tram_stop_id);
+
+  if (tfgm_stop_id == null) {
+    response.status(404).send({ error: 'Unknown station ID', valid_station_ids: valid_station_ids()})
+    return;
+  }
 
   let url = 'https://beta.tfgm.com/public-transport/tram/stops/' + tfgm_stop_id;
   reqlib.get(url, (error, page_response, body) => {
