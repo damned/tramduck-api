@@ -11,7 +11,12 @@ function Tram($tram) {
 
   function parse_carriages() {
     let carriages = field('.departure-carriages');
-    return carriages;
+    if (/.*ouble.*/.exec(carriages) != null) {
+      return 2;
+    }
+    else {
+      return 1;
+    }
   }
 
   function parse_wait_minutes() {
@@ -27,8 +32,7 @@ function Tram($tram) {
     get destination() { return field('.departure-destination'); },
     get carriages() { return parse_carriages(); },
     get wait() { return {
-        units: 'minutes',
-        duration: parse_wait_minutes()
+        minutes: parse_wait_minutes()
       };
     }
   }
@@ -36,6 +40,8 @@ function Tram($tram) {
 
 exports.trams = (request, response) => {
   let tram_stop_id = 'piccadilly-gardens-tram';
+  // let tram_stop_id = 'stretford-tram';
+  
   let url = 'https://beta.tfgm.com/public-transport/tram/stops/' + tram_stop_id;
   reqlib.get(url, (error, page_response, body) => {
     let $ = cheerio.load(body);
